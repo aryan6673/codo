@@ -18,16 +18,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="w-full h-full">
       <PostHogProvider>
-        <body className={inter.className}>
+        <body className={`${inter.className} m-0 p-0 w-full h-full overflow-hidden`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <div className="w-full h-full">
+              {children}
+            </div>
           </ThemeProvider>
           <Toaster />
           <Analytics />

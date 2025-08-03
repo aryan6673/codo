@@ -63,7 +63,13 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply w-full;
+    height: 100vh;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground w-full m-0 p-0;
+    height: 100vh;
+    overflow: hidden;
   }
 }

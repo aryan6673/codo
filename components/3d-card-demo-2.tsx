@@ -28,8 +28,8 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
   };
 
   return (
-    <CardContainer className="inter-var">
-      <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[35rem] h-auto rounded-xl p-6 border ">
+    <CardContainer className="inter-var w-full h-full flex items-center justify-center">
+      <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full max-w-[40rem] h-auto rounded-xl p-6 border ">
         <CardItem
           translateZ="50"
           className="text-xl font-bold text-neutral-600 dark:text-white"
@@ -50,7 +50,7 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
           className="w-full mt-4"
         >
           {/* Interactive Prompt Input Area */}
-          <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 rounded-xl group-hover/card:shadow-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="w-full bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800 rounded-xl group-hover/card:shadow-xl border border-orange-200 dark:border-orange-700 p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="text-2xl">💬</div>
               <div className="font-semibold text-gray-800 dark:text-white">Enter your prompt</div>
@@ -61,7 +61,7 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Describe your app idea... (e.g., 'Create a todo app with dark mode')"
-                className="min-h-[100px] resize-none border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400"
+                className="min-h-[100px] resize-none border-orange-300 dark:border-orange-600 bg-white dark:bg-gray-800 focus:border-orange-500 dark:focus:border-orange-400"
                 disabled={isLoading}
               />
               <div className="flex justify-end">

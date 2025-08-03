@@ -264,7 +264,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen max-h-screen">
+    <main className="flex w-full h-screen">
       {supabase && (
         <AuthDialog
           open={isAuthDialogOpen}
@@ -273,9 +273,9 @@ export default function Home() {
           supabase={supabase}
         />
       )}
-      <div className="grid w-full md:grid-cols-2">
+      <div className="grid w-full h-full md:grid-cols-2">
         <div
-          className={`flex flex-col w-full max-h-full max-w-[800px] mx-auto px-4 overflow-auto ${fragment ? 'col-span-1' : 'col-span-2'}`}
+          className={`flex flex-col w-full h-full px-6 overflow-auto ${fragment ? 'col-span-1' : 'col-span-2'}`}
         >
           <NavBar
             session={session}
@@ -288,7 +288,7 @@ export default function Home() {
             onUndo={handleUndo}
           />
           {messages.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center w-full h-full">
               <ThreeDCardDemo 
                 onSubmit={(prompt) => {
                   setChatInput(prompt);
