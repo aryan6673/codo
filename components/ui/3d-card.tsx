@@ -67,9 +67,9 @@ export const CardContainer = ({
       const clampedX = Math.max(0, Math.min(1, relativeX));
       const clampedY = Math.max(0, Math.min(1, relativeY));
       
-      // Convert to rotation values with subtle tilt for prompt block
-      const rotateX = (clampedY - 0.5) * 8; // Reduced to 8 for more subtle effect
-      const rotateY = (clampedX - 0.5) * -8; // Reduced to 8 for more subtle effect
+      // Convert to rotation values - higher tilt for container, text area has reduced tilt
+      const rotateX = (clampedY - 0.5) * 12; // Increased for better container effect
+      const rotateY = (clampedX - 0.5) * -12; // Increased for better container effect
       
       containerRef.current.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
     });
