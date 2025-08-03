@@ -8,6 +8,7 @@ import { ChatPicker } from '@/components/chat-picker'
 import { ChatSettings } from '@/components/chat-settings'
 import { NavBar } from '@/components/navbar'
 import { Preview } from '@/components/preview'
+import ThreeDCardDemo from '@/components/3d-card-demo-2'
 import { useAuth } from '@/lib/auth'
 import { Message, toAISDKMessages, toMessageImage } from '@/lib/messages'
 import { LLMModelConfig } from '@/lib/models'
@@ -228,11 +229,11 @@ export default function Home() {
 
   function handleSocialClick(target: 'github' | 'x' | 'discord') {
     if (target === 'github') {
-      window.open('https://github.com/e2b-dev/fragments', '_blank')
+      window.open('https://github.com/aryan6673/codo', '_blank')
     } else if (target === 'x') {
-      window.open('https://x.com/e2b_dev', '_blank')
+      window.open('https://npo.deyweaver.live', '_blank')
     } else if (target === 'discord') {
-      window.open('https://discord.gg/U7KEcGErtQ', '_blank')
+      window.open('https://npo.deyweaver.live', '_blank')
     }
 
     posthog.capture(`${target}_click`)
@@ -286,40 +287,62 @@ export default function Home() {
             canUndo={messages.length > 1 && !isLoading}
             onUndo={handleUndo}
           />
-          <Chat
-            messages={messages}
-            isLoading={isLoading}
-            setCurrentPreview={setCurrentPreview}
-          />
-          <ChatInput
-            retry={retry}
-            isErrored={error !== undefined}
-            errorMessage={errorMessage}
-            isLoading={isLoading}
-            isRateLimited={isRateLimited}
-            stop={stop}
-            input={chatInput}
-            handleInputChange={handleSaveInputChange}
-            handleSubmit={handleSubmitAuth}
-            isMultiModal={currentModel?.multiModal || false}
-            files={files}
-            handleFileChange={handleFileChange}
-          >
-            <ChatPicker
-              templates={templates}
-              selectedTemplate={selectedTemplate}
-              onSelectedTemplateChange={setSelectedTemplate}
-              models={filteredModels}
-              languageModel={languageModel}
-              onLanguageModelChange={handleLanguageModelChange}
-            />
-            <ChatSettings
-              languageModel={languageModel}
-              onLanguageModelChange={handleLanguageModelChange}
-              apiKeyConfigurable={!process.env.NEXT_PUBLIC_NO_API_KEY_INPUT}
-              baseURLConfigurable={!process.env.NEXT_PUBLIC_NO_BASE_URL_INPUT}
-            />
-          </ChatInput>
+          {messages.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center">
+              <ThreeDCardDemo 
+                onSubmit={(prompt) => {
+                  setChatInput(prompt);
+                  // Create a synthetic form submission
+                  const syntheticEvent = {
+                    preventDefault: () => {},
+                    currentTarget: {
+                      checkValidity: () => true,
+                      reportValidity: () => {}
+                    }
+                  } as React.FormEvent<HTMLFormElement>;
+                  handleSubmitAuth(syntheticEvent);
+                }}
+                isLoading={isLoading}
+              />
+            </div>
+          ) : (
+            <>
+              <Chat
+                messages={messages}
+                isLoading={isLoading}
+                setCurrentPreview={setCurrentPreview}
+              />
+              <ChatInput
+                retry={retry}
+                isErrored={error !== undefined}
+                errorMessage={errorMessage}
+                isLoading={isLoading}
+                isRateLimited={isRateLimited}
+                stop={stop}
+                input={chatInput}
+                handleInputChange={handleSaveInputChange}
+                handleSubmit={handleSubmitAuth}
+                isMultiModal={currentModel?.multiModal || false}
+                files={files}
+                handleFileChange={handleFileChange}
+              >
+                <ChatPicker
+                  templates={templates}
+                  selectedTemplate={selectedTemplate}
+                  onSelectedTemplateChange={setSelectedTemplate}
+                  models={filteredModels}
+                  languageModel={languageModel}
+                  onLanguageModelChange={handleLanguageModelChange}
+                />
+                <ChatSettings
+                  languageModel={languageModel}
+                  onLanguageModelChange={handleLanguageModelChange}
+                  apiKeyConfigurable={!process.env.NEXT_PUBLIC_NO_API_KEY_INPUT}
+                  baseURLConfigurable={!process.env.NEXT_PUBLIC_NO_BASE_URL_INPUT}
+                />
+              </ChatInput>
+            </>
+          )}
         </div>
         <Preview
           teamID={userTeam?.id}

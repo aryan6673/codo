@@ -43,9 +43,9 @@ export function useAuth(
       setSession(session)
       if (session) {
         getUserTeam(session).then(setUserTeam)
-        if (!session.user.user_metadata.is_fragments_user) {
+        if (!session.user.user_metadata.is_codo_user) {
           supabase?.auth.updateUser({
-            data: { is_fragments_user: true },
+            data: { is_codo_user: true },
           })
         }
         posthog.identify(session?.user.id, {
@@ -74,9 +74,9 @@ export function useAuth(
       if (_event === 'SIGNED_IN' && !recovery) {
         getUserTeam(session as Session).then(setUserTeam)
         setAuthDialog(false)
-        if (!session?.user.user_metadata.is_fragments_user) {
+        if (!session?.user.user_metadata.is_codo_user) {
           supabase?.auth.updateUser({
-            data: { is_fragments_user: true },
+            data: { is_codo_user: true },
           })
         }
         posthog.identify(session?.user.id, {

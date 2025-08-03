@@ -25,9 +25,9 @@ export function AuthDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <VisuallyHidden>
-          <DialogTitle>Sign in to Fragments</DialogTitle>
+          <DialogTitle>Sign in to Codo</DialogTitle>
           <DialogDescription>
-            Sign in or create an account to access Fragments
+            Sign in or create an account to access Codo by Deyweaver
           </DialogDescription>
         </VisuallyHidden>
         <div className="flex justify-center items-center flex-col">
@@ -35,7 +35,7 @@ export function AuthDialog({
             <div className="flex items-center justify-center rounded-md shadow-md bg-black p-2">
               <Logo className="text-white w-6 h-6" />
             </div>
-            Sign in to Fragments
+            Sign in to Codo
           </h1>
           <div className="w-full">
             <Auth
@@ -45,7 +45,7 @@ export function AuthDialog({
               socialLayout="horizontal"
               onSignUpValidate={validateEmail}
               metadata={{
-                is_fragments_user: true,
+                is_codo_user: true,
               }}
             />
           </div>

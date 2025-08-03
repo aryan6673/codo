@@ -270,9 +270,9 @@ export function ChatInput({
         </div>
       </div>
       <p className="text-xs text-muted-foreground mt-2 text-center">
-        Fragments is an open-source project made by{' '}
-        <a href="https://e2b.dev" target="_blank" className="text-[#ff8800]">
-          ✶ E2B
+        Codo by Deyweaver is an open-source project made by{' '}
+        <a href="https://npo.deyweaver.live" target="_blank" className="text-[#ff8800]">
+          ✶ deyweaver.live
         </a>
       </p>
     </form>
