@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Eye, EyeOff } from "lucide-react";
 
 interface ThreeDCardDemoProps {
   onSubmit?: (prompt: string) => void;
@@ -12,6 +12,7 @@ interface ThreeDCardDemoProps {
 
 export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoProps) {
   const [prompt, setPrompt] = useState("");
+  const [isAnimationEnabled, setIsAnimationEnabled] = useState(true);
 
   const handleSubmit = () => {
     if (prompt.trim() && onSubmit) {
@@ -28,20 +29,20 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
   };
 
   return (
-    <CardContainer className="inter-var w-full h-full flex items-center justify-center">
+    <CardContainer className="inter-var w-full h-full flex items-center justify-center" disabled={!isAnimationEnabled}>
       <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full max-w-[40rem] h-auto rounded-xl p-6 border ">
         <CardItem
           translateZ="50"
           className="text-xl font-bold text-neutral-600 dark:text-white"
         >
-          AI Prompt Block
+          What are you gonna launch today ?
         </CardItem>
         <CardItem
           as="p"
           translateZ="60"
           className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
         >
-          Write your prompt below to generate interactive code with AI
+          write the prompt for your app which you are gonna launch today
         </CardItem>
         <CardItem
           translateZ="100"
@@ -91,9 +92,26 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
             translateZ={20}
             translateX={-40}
             as="div"
-            className="text-xs font-normal dark:text-white text-muted-foreground"
+            className="flex items-center"
           >
-            Powered by AI ✨
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsAnimationEnabled(!isAnimationEnabled)}
+              className="flex items-center gap-2 text-xs font-normal dark:text-white text-muted-foreground hover:bg-transparent"
+            >
+              {isAnimationEnabled ? (
+                <>
+                  <Eye className="h-3 w-3" />
+                  Animation On
+                </>
+              ) : (
+                <>
+                  <EyeOff className="h-3 w-3" />
+                  Animation Off
+                </>
+              )}
+            </Button>
           </CardItem>
           <CardItem
             translateZ={20}
