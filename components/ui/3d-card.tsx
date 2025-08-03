@@ -25,14 +25,36 @@ export const CardContainer = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMouseEntered, setIsMouseEntered] = useState(false);
+  const animationRef = useRef<number>();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current || disabled) return;
-    const { left, top, width, height } =
-      containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - left - width / 2) / 25;
-    const y = (e.clientY - top - height / 2) / 25;
-    containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    
+    // Cancel previous animation frame to prevent jitter
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+    
+    animationRef.current = requestAnimationFrame(() => {
+      if (!containerRef.current) return;
+      
+      const { left, top, width, height } =
+        containerRef.current.getBoundingClientRect();
+      
+      // Calculate relative position (0 to 1)
+      const relativeX = (e.clientX - left) / width;
+      const relativeY = (e.clientY - top) / height;
+      
+      // Clamp values between 0 and 1 to prevent edge jitter
+      const clampedX = Math.max(0, Math.min(1, relativeX));
+      const clampedY = Math.max(0, Math.min(1, relativeY));
+      
+      // Convert to rotation values with reduced intensity and smooth boundaries
+      const rotateX = (clampedY - 0.5) * 15; // Reduced from 25 to 15
+      const rotateY = (clampedX - 0.5) * -15; // Reduced from 25 to 15
+      
+      containerRef.current.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+    });
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -44,7 +66,16 @@ export const CardContainer = ({
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current || disabled) return;
     setIsMouseEntered(false);
+    // Smooth transition back to neutral position
+    containerRef.current.style.transition = 'transform 0.3s ease-out';
     containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
+    
+    // Remove transition after animation completes to allow smooth mouse movements
+    setTimeout(() => {
+      if (containerRef.current) {
+        containerRef.current.style.transition = '';
+      }
+    }, 300);
   };
 
   return (
@@ -65,6 +96,8 @@ export const CardContainer = ({
           onMouseLeave={disabled ? undefined : handleMouseLeave}
           className={cn(
             "flex items-center justify-center relative transition-all duration-200 ease-linear",
+            // Add padding to create a buffer zone for smoother mouse tracking
+            "p-4",
             className
           )}
           style={{
