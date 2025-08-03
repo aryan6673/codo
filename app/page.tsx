@@ -32,7 +32,7 @@ export default function Home() {
   const [languageModel, setLanguageModel] = useLocalStorage<LLMModelConfig>(
     'languageModel',
     {
-      model: 'claude-3-5-sonnet-latest',
+      model: 'models/gemini-1.5-flash',
     },
   )
 
@@ -52,6 +52,9 @@ export default function Home() {
   const filteredModels = modelsList.models.filter((model) => {
     if (process.env.NEXT_PUBLIC_HIDE_LOCAL_MODELS) {
       return model.providerId !== 'ollama'
+    }
+    if (process.env.NEXT_PUBLIC_HIDE_VERTEX_MODELS) {
+      return !['vertex', 'ollama'].includes(model.providerId)
     }
     return true
   })
@@ -290,8 +293,11 @@ export default function Home() {
           {messages.length === 0 ? (
             <div className="flex-1 flex items-center justify-center w-full h-full">
               <ThreeDCardDemo 
-                onSubmit={(prompt) => {
+                onSubmit={(prompt, newLanguageModel, newSelectedTemplate) => {
                   setChatInput(prompt);
+                  // Update the language model and template with the new selections
+                  setLanguageModel({ ...languageModel, ...newLanguageModel });
+                  setSelectedTemplate(newSelectedTemplate);
                   // Create a synthetic form submission
                   const syntheticEvent = {
                     preventDefault: () => {},

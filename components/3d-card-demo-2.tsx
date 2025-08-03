@@ -3,16 +3,42 @@ import React, { useState } from "react";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ChatPicker } from "@/components/chat-picker";
+import { ChatSettings } from "@/components/chat-settings";
 import { ArrowUp, Eye, EyeOff } from "lucide-react";
+import { LLMModelConfig } from "@/lib/models";
+import { TemplateId } from "@/lib/templates";
+import modelsList from "@/lib/models.json";
+import templatesList from "@/lib/templates.json";
 
 interface ThreeDCardDemoProps {
-  onSubmit?: (prompt: string) => void;
+  onSubmit?: (prompt: string, languageModel: LLMModelConfig, selectedTemplate: 'auto' | TemplateId) => void;
   isLoading?: boolean;
 }
 
 export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoProps) {
   const [prompt, setPrompt] = useState("");
   const [isAnimationEnabled, setIsAnimationEnabled] = useState(true);
+  const [selectedTemplate, setSelectedTemplate] = useState<'auto' | TemplateId>('auto');
+  const [languageModel, setLanguageModel] = useState<LLMModelConfig>({
+    model: 'models/gemini-1.5-flash',
+    temperature: 0.7,
+  });
+
+  // Filter models (same logic as in page.tsx)
+  const filteredModels = modelsList.models.filter((model) => {
+    if (process.env.NEXT_PUBLIC_HIDE_LOCAL_MODELS) {
+      return !['ollama'].includes(model.providerId);
+    }
+    if (process.env.NEXT_PUBLIC_HIDE_VERTEX_MODELS) {
+      return !['vertex', 'ollama'].includes(model.providerId);
+    }
+    return true;
+  });
+
+  const handleLanguageModelChange = (e: LLMModelConfig) => {
+    setLanguageModel({ ...languageModel, ...e });
+  };
 
   const handleAnimationToggle = () => {
     setIsAnimationEnabled(!isAnimationEnabled);
@@ -20,7 +46,7 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
 
   const handleSubmit = () => {
     if (prompt.trim() && onSubmit) {
-      onSubmit(prompt.trim());
+      onSubmit(prompt.trim(), languageModel, selectedTemplate);
       setPrompt("");
     }
   };
@@ -64,6 +90,27 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
               <div className="text-2xl">💬</div>
               <div className="font-semibold text-gray-800 dark:text-white">Enter your prompt</div>
             </div>
+            
+            {/* Model Selection and Settings */}
+            <div className="flex items-center justify-between mb-3 p-2 bg-white dark:bg-gray-800 rounded-lg border border-orange-200 dark:border-orange-600">
+              <div className="flex items-center space-x-2">
+                <ChatPicker
+                  templates={templatesList}
+                  selectedTemplate={selectedTemplate}
+                  onSelectedTemplateChange={setSelectedTemplate}
+                  models={filteredModels}
+                  languageModel={languageModel}
+                  onLanguageModelChange={handleLanguageModelChange}
+                />
+              </div>
+              <ChatSettings
+                languageModel={languageModel}
+                onLanguageModelChange={handleLanguageModelChange}
+                apiKeyConfigurable={!process.env.NEXT_PUBLIC_NO_API_KEY_INPUT}
+                baseURLConfigurable={!process.env.NEXT_PUBLIC_NO_BASE_URL_INPUT}
+              />
+            </div>
+            
             <div className="space-y-3">
               <Textarea
                 value={prompt}
