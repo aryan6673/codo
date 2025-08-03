@@ -17,15 +17,33 @@ export const CardContainer = ({
   className,
   containerClassName,
   disabled = false,
+  resetOnDisable = false,
 }: {
   children?: React.ReactNode;
   className?: string;
   containerClassName?: string;
   disabled?: boolean;
+  resetOnDisable?: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMouseEntered, setIsMouseEntered] = useState(false);
   const animationRef = useRef<number>();
+
+  // Reset to neutral position when disabled
+  useEffect(() => {
+    if (disabled && resetOnDisable && containerRef.current) {
+      setIsMouseEntered(false);
+      containerRef.current.style.transition = 'transform 0.3s ease-out';
+      containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
+      
+      // Remove transition after animation completes
+      setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.style.transition = '';
+        }
+      }, 300);
+    }
+  }, [disabled, resetOnDisable]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current || disabled) return;

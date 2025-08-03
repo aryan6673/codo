@@ -14,6 +14,10 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
   const [prompt, setPrompt] = useState("");
   const [isAnimationEnabled, setIsAnimationEnabled] = useState(true);
 
+  const handleAnimationToggle = () => {
+    setIsAnimationEnabled(!isAnimationEnabled);
+  };
+
   const handleSubmit = () => {
     if (prompt.trim() && onSubmit) {
       onSubmit(prompt.trim());
@@ -29,7 +33,11 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
   };
 
   return (
-    <CardContainer className="inter-var w-full h-full flex items-center justify-center" disabled={!isAnimationEnabled}>
+    <CardContainer 
+      className="inter-var w-full h-full flex items-center justify-center" 
+      disabled={!isAnimationEnabled}
+      resetOnDisable={true}
+    >
       <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full max-w-[40rem] h-auto rounded-xl p-6 border ">
         <CardItem
           translateZ="50"
