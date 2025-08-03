@@ -45,9 +45,19 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
   };
 
   const handleSubmit = () => {
+    console.log('=== 3D Card handleSubmit called ===')
+    console.log('prompt value:', prompt)
+    console.log('prompt.trim():', prompt.trim())
+    console.log('prompt.trim() length:', prompt.trim().length)
+    console.log('languageModel:', languageModel)
+    console.log('selectedTemplate:', selectedTemplate)
+    
     if (prompt.trim() && onSubmit) {
+      console.log('Calling onSubmit with:', prompt.trim(), languageModel, selectedTemplate)
       onSubmit(prompt.trim(), languageModel, selectedTemplate);
       setPrompt("");
+    } else {
+      console.log('Conditions not met: prompt.trim()=', !!prompt.trim(), 'onSubmit=', !!onSubmit)
     }
   };
 

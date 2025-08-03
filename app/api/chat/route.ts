@@ -60,7 +60,18 @@ export async function POST(req: Request) {
     config: LLMModelConfig
   } = await req.json()
 
-  const limit = !config.apiKey
+  // Check if we have an API key either from config or environment
+  const hasApiKey = config.apiKey || 
+    (model.providerId === 'google' && process.env.GOOGLE_AI_API_KEY) ||
+    (model.providerId === 'openai' && process.env.OPENAI_API_KEY) ||
+    (model.providerId === 'anthropic' && process.env.ANTHROPIC_API_KEY) ||
+    (model.providerId === 'groq' && process.env.GROQ_API_KEY) ||
+    (model.providerId === 'fireworks' && process.env.FIREWORKS_API_KEY) ||
+    (model.providerId === 'togetherai' && process.env.TOGETHER_API_KEY) ||
+    (model.providerId === 'mistral' && process.env.MISTRAL_API_KEY) ||
+    (model.providerId === 'xai' && process.env.XAI_API_KEY)
+
+  const limit = !hasApiKey
     ? await ratelimit(
         req.headers.get('x-forwarded-for'),
         rateLimitMaxRequests,

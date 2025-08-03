@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { ViewType } from '@/components/auth'
 import { AuthDialog } from '@/components/auth-dialog'
 import { Chat } from '@/components/chat'
@@ -35,6 +36,18 @@ export default function Home() {
       model: 'models/gemini-1.5-flash',
     },
   )
+
+  // Clear corrupted API key from localStorage if it contains error message
+  React.useEffect(() => {
+    if (languageModel.apiKey && (
+      languageModel.apiKey.includes('provider is currently unavailable') ||
+      languageModel.apiKey.includes('exceeded your current quota') ||
+      languageModel.apiKey.includes('Try using your own API key')
+    )) {
+      console.log('Clearing corrupted API key:', languageModel.apiKey)
+      setLanguageModel({ ...languageModel, apiKey: undefined });
+    }
+  }, [languageModel.apiKey, setLanguageModel]);
 
   const posthog = usePostHog()
 
@@ -196,6 +209,80 @@ export default function Home() {
     })
   }
 
+  async function handleSubmitFromCard(promptText: string, newLanguageModel?: LLMModelConfig, newSelectedTemplate?: 'auto' | TemplateId) {
+    console.log('=== handleSubmitFromCard called ===')
+    console.log('promptText:', promptText)
+    console.log('promptText length:', promptText.length)
+    console.log('newLanguageModel:', newLanguageModel)
+    console.log('newSelectedTemplate:', newSelectedTemplate)
+    
+    if (!session) {
+      return setAuthDialog(true)
+    }
+
+    if (isLoading) {
+      stop()
+    }
+
+    // Update states if provided
+    if (newLanguageModel) {
+      setLanguageModel({ ...languageModel, ...newLanguageModel });
+    }
+    if (newSelectedTemplate) {
+      setSelectedTemplate(newSelectedTemplate);
+    }
+
+    const content: Message['content'] = [{ type: 'text', text: promptText }]
+    console.log('Created message content:', content)
+    
+    const images = await toMessageImage(files)
+
+    if (images.length > 0) {
+      images.forEach((image) => {
+        content.push({ type: 'image', image })
+      })
+    }
+
+    const updatedMessages = addMessage({
+      role: 'user',
+      content,
+    })
+    
+    console.log('Added message to state:', updatedMessages)
+
+    // Use updated values for submission
+    const templateKey = newSelectedTemplate || selectedTemplate;
+    const templateToUse = templateKey === 'auto'
+      ? templates
+      : { [templateKey]: templates[templateKey as TemplateId] };
+    
+    const configToUse = newLanguageModel ? { ...languageModel, ...newLanguageModel } : languageModel;
+    const modelToUse = filteredModels.find((model) => model.id === configToUse.model) || currentModel;
+
+    console.log('Template to use:', templateToUse)
+    console.log('Config to use:', configToUse)
+    console.log('Model to use:', modelToUse)
+    console.log('AISDK messages being sent:', toAISDKMessages(updatedMessages))
+
+    submit({
+      userID: session?.user?.id,
+      teamID: userTeam?.id,
+      messages: toAISDKMessages(updatedMessages),
+      template: templateToUse,
+      model: modelToUse,
+      config: configToUse,
+    })
+
+    setChatInput('')
+    setFiles([])
+    setCurrentTab('code')
+
+    posthog.capture('chat_submit', {
+      template: newSelectedTemplate || selectedTemplate,
+      model: configToUse.model,
+    })
+  }
+
   function retry() {
     submit({
       userID: session?.user?.id,
@@ -293,20 +380,9 @@ export default function Home() {
           {messages.length === 0 ? (
             <div className="flex-1 flex items-center justify-center w-full h-full">
               <ThreeDCardDemo 
-                onSubmit={(prompt, newLanguageModel, newSelectedTemplate) => {
-                  setChatInput(prompt);
-                  // Update the language model and template with the new selections
-                  setLanguageModel({ ...languageModel, ...newLanguageModel });
-                  setSelectedTemplate(newSelectedTemplate);
-                  // Create a synthetic form submission
-                  const syntheticEvent = {
-                    preventDefault: () => {},
-                    currentTarget: {
-                      checkValidity: () => true,
-                      reportValidity: () => {}
-                    }
-                  } as React.FormEvent<HTMLFormElement>;
-                  handleSubmitAuth(syntheticEvent);
+                onSubmit={async (prompt, newLanguageModel, newSelectedTemplate) => {
+                  console.log('3D Card onSubmit called with:', { prompt, newLanguageModel, newSelectedTemplate })
+                  await handleSubmitFromCard(prompt, newLanguageModel, newSelectedTemplate);
                 }}
                 isLoading={isLoading}
               />
