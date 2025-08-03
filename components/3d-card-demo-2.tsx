@@ -54,8 +54,8 @@ export default function ThreeDCardDemo({ onSubmit, isLoading }: ThreeDCardDemoPr
         </CardItem>
         <CardItem
           translateZ="100"
-          rotateX={20}
-          rotateZ={-10}
+          rotateX={5}
+          rotateZ={-2}
           className="w-full mt-4"
         >
           {/* Interactive Prompt Input Area */}
